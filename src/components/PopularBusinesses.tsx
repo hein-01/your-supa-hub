@@ -229,7 +229,7 @@ const PopularBusinesses = () => {
                     <div className="flex items-center gap-1">
                       {business.facebook_page && (
                         <div 
-                          className="w-7 h-7 rounded-full border border-border shadow-sm flex items-center justify-center bg-background hover:shadow-md transition-shadow cursor-pointer"
+                          className="w-7 h-7 rounded-full border border-border shadow-md flex items-center justify-center bg-background hover:shadow-lg transition-shadow cursor-pointer"
                           onClick={() => window.open(business.facebook_page, '_blank')}
                         >
                           <Facebook className="w-3 h-3 text-blue-600" />
@@ -237,7 +237,7 @@ const PopularBusinesses = () => {
                       )}
                       {business.tiktok_url && (
                         <div 
-                          className="w-7 h-7 rounded-full border border-border shadow-sm flex items-center justify-center bg-background hover:shadow-md transition-shadow cursor-pointer"
+                          className="w-7 h-7 rounded-full border border-border shadow-md flex items-center justify-center bg-background hover:shadow-lg transition-shadow cursor-pointer"
                           onClick={() => window.open(business.tiktok_url, '_blank')}
                         >
                           <Instagram className="w-3 h-3 text-pink-600" />
@@ -245,7 +245,7 @@ const PopularBusinesses = () => {
                       )}
                       {business.phone && (
                         <div 
-                          className="w-7 h-7 rounded-full border border-border shadow-sm flex items-center justify-center bg-background hover:shadow-md transition-shadow cursor-pointer"
+                          className="w-7 h-7 rounded-full border border-border shadow-md flex items-center justify-center bg-background hover:shadow-lg transition-shadow cursor-pointer"
                           onClick={() => window.open(`https://wa.me/${business.phone.replace(/[^\d]/g, '')}`, '_blank')}
                         >
                           <MessageCircle className="w-3 h-3 text-green-600" />
