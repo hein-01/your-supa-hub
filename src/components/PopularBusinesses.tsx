@@ -158,37 +158,38 @@ const PopularBusinesses = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8 text-foreground">Popular Businesses</h2>
         
-        <div className="relative">
-          <Swiper
-            modules={[Navigation, Pagination]}
-            navigation={{
-              nextEl: '.popular-businesses-next',
-              prevEl: '.popular-businesses-prev',
-            }}
-            pagination={{ 
-              clickable: true,
-              dynamicBullets: true 
-            }}
-            spaceBetween={20}
-            slidesPerView={1}
-            breakpoints={{
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              768: {
-                slidesPerView: 2.5,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-              },
-              1280: {
-                slidesPerView: 4,
-                spaceBetween: 30,
-              },
-            }}
+        <div className="bg-muted/30 rounded-2xl p-8 mx-4">
+          <div className="relative">
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation={{
+                nextEl: '.popular-businesses-next',
+                prevEl: '.popular-businesses-prev',
+              }}
+              pagination={{ 
+                clickable: true,
+                dynamicBullets: true 
+              }}
+              spaceBetween={20}
+              slidesPerView={1}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 2.5,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                },
+                1280: {
+                  slidesPerView: 4,
+                  spaceBetween: 20,
+                },
+              }}
             loop={false}
             grabCursor={true}
             centeredSlides={false}
@@ -379,6 +380,7 @@ const PopularBusinesses = () => {
           </div>
           <div className="popular-businesses-next absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white shadow-lg transition-all">
             <ChevronRight className="w-5 h-5 text-gray-700" />
+          </div>
           </div>
         </div>
       </div>
