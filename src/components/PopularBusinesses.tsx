@@ -158,9 +158,45 @@ const PopularBusinesses = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8 text-foreground">Popular Businesses</h2>
         
-        <div className="flex flex-wrap justify-center">
-          {businesses.map((business) => (
-            <Card key={business.id} className="group w-[320px] h-[455px] flex flex-col shadow-lg hover:shadow-2xl transition-all duration-300 mx-[5px] md:mx-[10px] mb-4">
+        <div className="relative">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            navigation={{
+              nextEl: '.popular-businesses-next',
+              prevEl: '.popular-businesses-prev',
+            }}
+            pagination={{ 
+              clickable: true,
+              dynamicBullets: true 
+            }}
+            spaceBetween={20}
+            slidesPerView={1}
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 2.5,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+              },
+              1280: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+              },
+            }}
+            loop={false}
+            grabCursor={true}
+            centeredSlides={false}
+            className="popular-businesses-swiper"
+          >
+            {businesses.map((business) => (
+              <SwiperSlide key={business.id}>
+                <Card className="group w-full max-w-[320px] h-[455px] flex flex-col shadow-lg hover:shadow-2xl transition-all duration-300 mx-auto">
               <div className="relative overflow-hidden rounded-t-lg">
                 <Swiper
                   modules={[Navigation, Pagination]}
@@ -330,10 +366,20 @@ const PopularBusinesses = () => {
                     Visit Website
                     <ChevronRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                 </div>
+               </CardContent>
+             </Card>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          
+          {/* Navigation Buttons */}
+          <div className="popular-businesses-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white shadow-lg transition-all">
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </div>
+          <div className="popular-businesses-next absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white shadow-lg transition-all">
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </div>
         </div>
       </div>
     </section>
