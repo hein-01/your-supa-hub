@@ -376,7 +376,7 @@ const PopularBusinesses = () => {
         </div>
         
         {/* Mobile version without background container */}
-        <div className="block md:hidden px-4">
+        <div className="block md:hidden">
           <div className="relative">
             <Swiper
               modules={[Pagination]}
@@ -386,7 +386,7 @@ const PopularBusinesses = () => {
                 horizontalClass: 'swiper-pagination-horizontal'
               }}
               spaceBetween={20}
-              slidesPerView={1}
+              slidesPerView={1.2}
               breakpoints={{
                 640: {
                   slidesPerView: 2,
@@ -400,7 +400,7 @@ const PopularBusinesses = () => {
               loop={false}
               grabCursor={true}
               centeredSlides={false}
-              className="popular-businesses-swiper-mobile pb-12"
+              className="popular-businesses-swiper-mobile pb-12 pl-4"
             >
               {businesses.map((business) => (
                 <SwiperSlide key={business.id}>
