@@ -203,12 +203,16 @@ const PopularBusinesses = () => {
                   navigation={{
                     nextEl: `.swiper-button-next-${business.id}`,
                     prevEl: `.swiper-button-prev-${business.id}`,
+                    enabled: true
                   }}
-                  pagination={{ clickable: true }}
+                  pagination={{ 
+                    clickable: true,
+                    enabled: false 
+                  }}
                   spaceBetween={0}
                   slidesPerView={1}
-                  loop={true}
-                  className="w-[320px] h-[200px]"
+                  loop={false}
+                  className="w-[320px] h-[200px] product-carousel"
                 >
                   {business.product_images && business.product_images.length > 0 ? (
                     business.product_images.map((image, index) => (
@@ -233,12 +237,18 @@ const PopularBusinesses = () => {
                     {/* Custom Navigation Arrows */}
                     {business.product_images && business.product_images.length > 1 && (
                       <>
-                        <div className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
-                          <ChevronLeft className="w-4 h-4 text-gray-700" />
-                        </div>
-                        <div className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
-                          <ChevronRight className="w-4 h-4 text-gray-700" />
-                        </div>
+                        <button 
+                          className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-lg border border-gray-200`}
+                          type="button"
+                        >
+                          <ChevronLeft className="w-4 h-4 text-gray-800" />
+                        </button>
+                        <button 
+                          className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-lg border border-gray-200`}
+                          type="button"
+                        >
+                          <ChevronRight className="w-4 h-4 text-gray-800" />
+                        </button>
                       </>
                     )}
                 </Swiper>
@@ -411,12 +421,16 @@ const PopularBusinesses = () => {
                     navigation={{
                       nextEl: `.swiper-button-next-${business.id}`,
                       prevEl: `.swiper-button-prev-${business.id}`,
+                      enabled: true
                     }}
-                    pagination={{ clickable: true }}
+                    pagination={{ 
+                      clickable: true,
+                      enabled: false 
+                    }}
                     spaceBetween={0}
                     slidesPerView={1}
-                    loop={true}
-                    className="w-[320px] h-[200px]"
+                    loop={false}
+                    className="w-[320px] h-[200px] product-carousel"
                   >
                     {business.product_images && business.product_images.length > 0 ? (
                       business.product_images.map((image, index) => (
@@ -441,12 +455,18 @@ const PopularBusinesses = () => {
                      {/* Custom Navigation Arrows */}
                      {business.product_images && business.product_images.length > 1 && (
                        <>
-                         <div className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
-                           <ChevronLeft className="w-4 h-4 text-gray-700" />
-                         </div>
-                         <div className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
-                           <ChevronRight className="w-4 h-4 text-gray-700" />
-                         </div>
+                         <button 
+                           className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-lg border border-gray-200`}
+                           type="button"
+                         >
+                           <ChevronLeft className="w-4 h-4 text-gray-800" />
+                         </button>
+                         <button 
+                           className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/95 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-lg border border-gray-200`}
+                           type="button"
+                         >
+                           <ChevronRight className="w-4 h-4 text-gray-800" />
+                         </button>
                        </>
                      )}
                   </Swiper>
