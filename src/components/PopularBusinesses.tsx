@@ -230,17 +230,17 @@ const PopularBusinesses = () => {
                     </SwiperSlide>
                   )}
                   
-                  {/* Custom Navigation Arrows */}
-                  {business.product_images && business.product_images.length > 1 && (
-                    <>
-                      <div className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-10 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-colors`}>
-                        <ChevronLeft className="w-3 h-3 text-gray-700" />
-                      </div>
-                      <div className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-10 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-colors`}>
-                        <ChevronRight className="w-3 h-3 text-gray-700" />
-                      </div>
-                    </>
-                  )}
+                    {/* Custom Navigation Arrows */}
+                    {business.product_images && business.product_images.length > 1 && (
+                      <>
+                        <div className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
+                          <ChevronLeft className="w-4 h-4 text-gray-700" />
+                        </div>
+                        <div className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
+                          <ChevronRight className="w-4 h-4 text-gray-700" />
+                        </div>
+                      </>
+                    )}
                 </Swiper>
                 
                 <Button
@@ -438,17 +438,17 @@ const PopularBusinesses = () => {
                       </SwiperSlide>
                     )}
                     
-                    {/* Custom Navigation Arrows */}
-                    {business.product_images && business.product_images.length > 1 && (
-                      <>
-                        <div className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-10 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-colors`}>
-                          <ChevronLeft className="w-3 h-3 text-gray-700" />
-                        </div>
-                        <div className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-10 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-colors`}>
-                          <ChevronRight className="w-3 h-3 text-gray-700" />
-                        </div>
-                      </>
-                    )}
+                     {/* Custom Navigation Arrows */}
+                     {business.product_images && business.product_images.length > 1 && (
+                       <>
+                         <div className={`swiper-button-prev-${business.id} absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
+                           <ChevronLeft className="w-4 h-4 text-gray-700" />
+                         </div>
+                         <div className={`swiper-button-next-${business.id} absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-200 shadow-md`}>
+                           <ChevronRight className="w-4 h-4 text-gray-700" />
+                         </div>
+                       </>
+                     )}
                   </Swiper>
                   
                   <Button
