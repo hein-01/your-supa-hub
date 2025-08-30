@@ -386,7 +386,7 @@ const PopularBusinesses = () => {
                 horizontalClass: 'swiper-pagination-horizontal'
               }}
               spaceBetween={20}
-              slidesPerView={1.2}
+              slidesPerView={1.15}
               breakpoints={{
                 640: {
                   slidesPerView: 2,
