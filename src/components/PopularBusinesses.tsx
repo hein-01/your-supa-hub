@@ -295,7 +295,7 @@ const PopularBusinesses = () => {
                       <img 
                         src={business.image_url || "https://images.unsplash.com/photo-1592659762303-90081d34b277?w=40&h=40&fit=crop"} 
                         alt="Business logo" 
-                        className="w-10 h-10 rounded-md object-cover"
+                        className="w-10 h-10 rounded-md object-cover border border-amber-700"
                       />
                       {isLicenseValid(business.license_expired_date) && (
                         <BadgeCheck className="w-4 h-4 text-white absolute -top-1 -right-1 rounded-full bg-primary" />
@@ -503,7 +503,7 @@ const PopularBusinesses = () => {
                         <img 
                           src={business.image_url || "https://images.unsplash.com/photo-1592659762303-90081d34b277?w=40&h=40&fit=crop"} 
                           alt="Business logo" 
-                          className="w-10 h-10 rounded-md object-cover"
+                          className="w-10 h-10 rounded-md object-cover border border-amber-700"
                         />
                         {isLicenseValid(business.license_expired_date) && (
                           <BadgeCheck className="w-4 h-4 text-white absolute -top-1 -right-1 rounded-full bg-primary" />
