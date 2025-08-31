@@ -170,7 +170,14 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
       </div>
       
       {/* Light green section positioned under the product images */}
-      <div className="h-[20px] bg-green-200"></div>
+      <div className="h-[20px] bg-green-200 flex items-center px-2">
+        {isLicenseValid(business.license_expired_date) && (
+          <div className="flex items-center gap-1">
+            <BadgeCheck className="w-3 h-3 text-white" />
+            <span className="text-white text-xs font-medium">Verified</span>
+          </div>
+        )}
+      </div>
       
       <CardContent className="flex-1 p-3 flex flex-col justify-between">
         <div className="space-y-[2px]">
@@ -184,9 +191,6 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
                 alt="Business logo" 
                 className="w-10 h-10 rounded-md object-cover border border-amber-700"
               />
-              {isLicenseValid(business.license_expired_date) && (
-                <BadgeCheck className="w-4 h-4 text-white absolute -top-1 -right-1 rounded-full bg-primary" />
-              )}
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-sm text-foreground leading-tight line-clamp-2">
