@@ -104,7 +104,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
           spaceBetween={0}
           slidesPerView={1}
           loop={true}
-          className="w-full h-[190px] product-carousel"
+          className="w-full h-[200px] product-carousel"
         >
           {business.product_images && business.product_images.length > 0 ? (
             business.product_images.map((image, index) => (
@@ -112,7 +112,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
                 <img
                   src={`${image}?w=320&h=200&fit=crop`}
                   alt={`${business.name} product ${index + 1}`}
-                  className="w-full h-[190px] object-cover"
+                  className="w-full h-[200px] object-cover"
                 />
               </SwiperSlide>
             ))
@@ -121,7 +121,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
               <img
                 src={`${business.image_url}?w=320&h=200&fit=crop`}
                 alt={`${business.name} main image`}
-                className="w-full h-[190px] object-cover"
+                className="w-full h-[200px] object-cover"
               />
             </SwiperSlide>
           ) : (
@@ -129,7 +129,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
               <img
                 src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=320&h=200&fit=crop"
                 alt={`${business.name} products`}
-                className="w-full h-[190px] object-cover"
+                className="w-full h-[200px] object-cover"
               />
             </SwiperSlide>
           )}
