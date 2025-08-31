@@ -170,7 +170,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
       </div>
       
       {/* Light green section positioned under the product images */}
-      <div className="h-[20px] bg-green-200 flex items-center px-2">
+      <div className="h-[20px] bg-[#58BB8A] flex items-center px-2">
         {isLicenseValid(business.license_expired_date) && (
           <div className="flex items-center gap-1">
             <BadgeCheck className="w-3 h-3 text-white" />
