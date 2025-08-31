@@ -160,9 +160,6 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
           ) : 'Price on request'}
         </div>
         
-        {/* Light green section at bottom of product images */}
-        <div className="absolute bottom-0 left-0 right-0 h-[20px] bg-green-200 z-20"></div>
-        
         <Button
           variant="ghost"
           size="sm"
@@ -171,6 +168,9 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
           <Bookmark className="w-3 h-3 text-gray-600" />
         </Button>
       </div>
+      
+      {/* Light green section positioned under the product images */}
+      <div className="h-[20px] bg-green-200"></div>
       
       <CardContent className="flex-1 p-3 flex flex-col justify-between">
         <div className="space-y-2">
