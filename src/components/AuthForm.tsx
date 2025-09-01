@@ -158,6 +158,19 @@ export default function AuthForm({ mode }: AuthFormProps) {
           throw error;
         }
 
+        // Check if user is an admin - admins should use admin login
+        const { data: adminUser, error: adminError } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+
+        if (adminUser) {
+          await supabase.auth.signOut();
+          await logLoginAttempt(formData.email, false);
+          throw new Error("Admin users must sign in through the admin portal at /@admin/login");
+        }
+
         await logLoginAttempt(formData.email, true);
 
         toast({
