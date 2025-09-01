@@ -17,8 +17,6 @@ export default function AdminAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [needsTwoFactor, setNeedsTwoFactor] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [activeTab, setActiveTab] = useState("login");
   
@@ -121,26 +119,6 @@ export default function AdminAuth() {
         throw new Error("Access denied. Admin privileges required.");
       }
 
-      // Check if 2FA is enabled
-      if (adminUser.two_factor_enabled && !twoFactorCode) {
-        setNeedsTwoFactor(true);
-        return;
-      }
-
-      if (adminUser.two_factor_enabled && twoFactorCode) {
-        // Verify 2FA code using Supabase edge function
-        const { data: verificationResult } = await supabase.functions.invoke('verify-2fa', {
-          body: {
-            secret: adminUser.two_factor_secret,
-            token: twoFactorCode
-          }
-        });
-
-        if (!verificationResult?.valid) {
-          await logLoginAttempt(email, false);
-          throw new Error("Invalid 2FA code");
-        }
-      }
 
       await logLoginAttempt(email, true);
       toast({
@@ -311,23 +289,9 @@ export default function AdminAuth() {
                   </div>
                 </div>
 
-                {needsTwoFactor && (
-                  <div className="space-y-2">
-                    <Label htmlFor="twoFactor">Two-Factor Authentication Code</Label>
-                    <Input
-                      id="twoFactor"
-                      type="text"
-                      placeholder="Enter 6-digit code from your authenticator app"
-                      value={twoFactorCode}
-                      onChange={(e) => setTwoFactorCode(e.target.value)}
-                      maxLength={6}
-                      required
-                    />
-                  </div>
-                )}
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Signing In..." : needsTwoFactor ? "Verify & Sign In" : "Sign In"}
+                  {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
               </form>
             </TabsContent>

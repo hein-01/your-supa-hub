@@ -6,8 +6,6 @@ interface AdminProfile {
   id: string;
   user_id: string;
   admin_role: string;
-  two_factor_enabled: boolean;
-  two_factor_secret: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -142,8 +140,7 @@ export function useAdminAuth() {
         .from('admin_users')
         .insert({
           user_id: userId,
-          admin_role: 'admin',
-          two_factor_enabled: false
+          admin_role: 'admin'
         });
 
       if (error) throw error;

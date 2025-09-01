@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import TwoFactorSetup from "@/components/admin/TwoFactorSetup";
+
 import AdminMetrics from "@/components/admin/AdminMetrics";
 import RecentActivity from "@/components/admin/RecentActivity";
 import ListingManagement from "@/components/admin/ListingManagement";
@@ -94,9 +94,6 @@ export default function AdminDashboard() {
               <div className="flex items-center space-x-2">
                 {getRoleIcon()}
                 <span className="text-sm font-medium">{getRoleDisplayName()}</span>
-                <Badge variant={adminProfile?.two_factor_enabled ? "default" : "destructive"}>
-                  {adminProfile?.two_factor_enabled ? "2FA On" : "2FA Off"}
-                </Badge>
               </div>
               <Button variant="outline" onClick={signOut} className="flex items-center space-x-2">
                 <LogOut className="h-4 w-4" />
@@ -193,17 +190,9 @@ export default function AdminDashboard() {
                     <p className="text-sm text-muted-foreground">User ID</p>
                     <p className="font-mono text-xs">{adminProfile?.user_id}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Two-Factor Authentication</p>
-                    <p className={`font-medium ${adminProfile?.two_factor_enabled ? 'text-green-600' : 'text-red-600'}`}>
-                      {adminProfile?.two_factor_enabled ? 'Enabled' : 'Disabled'}
-                    </p>
-                  </div>
                 </CardContent>
               </Card>
 
-              {/* Two-Factor Authentication */}
-              <TwoFactorSetup />
             </div>
           </div>
         )}
