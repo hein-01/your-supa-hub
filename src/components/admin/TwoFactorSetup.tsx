@@ -31,21 +31,35 @@ export default function TwoFactorSetup() {
   const [step, setStep] = useState<'setup' | 'verify'>('setup');
 
   useEffect(() => {
-    if (step === 'setup' && !adminProfile?.two_factor_enabled) {
+    // Only auto-generate if we have a valid admin profile and 2FA is not enabled
+    if (step === 'setup' && adminProfile && !adminProfile.two_factor_enabled) {
       generateSecret();
     }
   }, [step, adminProfile]);
 
   const generateSecret = async () => {
+    if (!adminProfile) {
+      toast({
+        title: "Error",
+        description: "Admin profile not loaded. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       
       // Load dependencies dynamically
       await loadDependencies();
       
+      if (!speakeasy || !QRCode) {
+        throw new Error('Failed to load 2FA libraries');
+      }
+      
       // Generate secret
       const newSecret = speakeasy.generateSecret({
-        name: `Admin Portal (${adminProfile?.user_id})`,
+        name: `Admin Portal (${adminProfile.user_id})`,
         issuer: 'Admin Portal',
         length: 32,
       });
