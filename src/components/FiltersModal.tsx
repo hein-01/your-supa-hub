@@ -90,19 +90,9 @@ export const FiltersModal = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-2xl border-0 max-h-[90vh] overflow-hidden">
         <DialogHeader className="pb-4 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-bold text-foreground">
-              Search filters
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full hover:bg-gray-100"
-              onClick={() => setOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <DialogTitle className="text-xl font-bold text-foreground">
+            Search filters
+          </DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col min-h-0 overflow-hidden">
