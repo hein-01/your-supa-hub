@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Truck, Store } from "lucide-react";
 import { FiltersModal } from "./FiltersModal";
 
 interface SearchFiltersProps {
   onSearchChange: (search: string) => void;
   onCategoryChange: (category: string) => void;
   onLocationChange: (location: string) => void;
+  onDeliveryFilter?: (type: string) => void;
   categories: string[];
   initialSearchTerm?: string;
   initialCategory?: string;
@@ -18,6 +19,7 @@ export const SearchFilters = ({
   onSearchChange,
   onCategoryChange,
   onLocationChange,
+  onDeliveryFilter,
   categories,
   initialSearchTerm = "",
   initialCategory = "all",
@@ -54,7 +56,7 @@ export const SearchFilters = ({
           </form>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <FiltersModal
             onSearchChange={onSearchChange}
             onCategoryChange={onCategoryChange}
@@ -79,6 +81,26 @@ export const SearchFilters = ({
             className="shadow-md hover:shadow-lg transition-shadow duration-200"
           >
             Search
+          </Button>
+          
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200 text-green-700 border-green-500 hover:bg-green-50"
+            onClick={() => onDeliveryFilter?.("cash_on_delivery")}
+          >
+            <Truck className="h-4 w-4 mr-2" />
+            Cash on Delivery
+          </Button>
+          
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200 text-blue-700 border-blue-500 hover:bg-blue-50"
+            onClick={() => onDeliveryFilter?.("store_pickup")}
+          >
+            <Store className="h-4 w-4 mr-2" />
+            Store Pick Up
           </Button>
           
           <Button 
