@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement, isValidElement } from "react";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -61,6 +61,9 @@ export const FiltersModal = ({
 
   const currentProducts = categoryProducts[category] || ["All Products"];
 
+  // Check if filters are active
+  const isFiltersActive = category !== "all" || (product !== "all" && product !== "All Products");
+
   useEffect(() => {
     // Reset product selection when category changes
     if (category === "all") {
@@ -83,12 +86,24 @@ export const FiltersModal = ({
     onProductChange?.("all");
   };
 
+  // Clone children to add active styling
+  const triggerButton = isValidElement(children) 
+    ? cloneElement(children, {
+        ...children.props,
+        className: `${children.props.className || ""} ${
+          isFiltersActive 
+            ? "border-purple-500 bg-purple-50 text-purple-700 hover:bg-purple-100" 
+            : ""
+        }`.trim()
+      })
+    : children;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {children}
+        {triggerButton}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-2xl border-0 max-h-[90vh] overflow-hidden">
+      <DialogContent className="sm:max-w-md bg-white rounded-lg shadow-2xl border-0 max-h-[90vh] overflow-hidden [&>button]:bg-purple-200 [&>button]:hover:bg-purple-300 [&>button]:rounded-full [&>button]:opacity-100 [&>button>svg]:text-purple-700">
         <DialogHeader className="pb-4 border-b border-gray-100">
           <DialogTitle className="text-xl font-bold text-foreground">
             Search filters
