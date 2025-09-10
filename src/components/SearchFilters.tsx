@@ -43,79 +43,82 @@ export const SearchFilters = ({
           Search & Filters
         </div>
         
-        <div className="grid grid-cols-1 gap-4">
-          {/* Search */}
-          <form onSubmit={handleSearchSubmit} className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search businesses..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 border-2 shadow-sm hover:shadow-md focus:shadow-lg focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500/20 transition-all duration-200"
-            />
-          </form>
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
-          <FiltersModal
-            onSearchChange={onSearchChange}
-            onCategoryChange={onCategoryChange}
-            onLocationChange={onLocationChange}
-            categories={categories}
-            initialSearchTerm={initialSearchTerm}
-            initialCategory={initialCategory}
-          >
+        <div className="space-y-4">
+          {/* Search with Filters and Search buttons */}
+          <div className="flex gap-2">
+            <form onSubmit={handleSearchSubmit} className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search businesses..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 border-2 shadow-sm hover:shadow-md focus:shadow-lg focus:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500/20 transition-all duration-200"
+              />
+            </form>
+            
+            <FiltersModal
+              onSearchChange={onSearchChange}
+              onCategoryChange={onCategoryChange}
+              onLocationChange={onLocationChange}
+              categories={categories}
+              initialSearchTerm={initialSearchTerm}
+              initialCategory={initialCategory}
+            >
+              <Button 
+                type="button" 
+                variant="outline"
+                className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200"
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+            </FiltersModal>
+            
             <Button 
               type="button" 
-              variant="outline"
-              className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200"
+              onClick={() => handleSearchSubmit(new Event('submit') as any)}
+              className="shadow-md hover:shadow-lg transition-shadow duration-200"
             >
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
+              Search
             </Button>
-          </FiltersModal>
+          </div>
           
-          <Button 
-            type="button" 
-            onClick={() => handleSearchSubmit(new Event('submit') as any)}
-            className="shadow-md hover:shadow-lg transition-shadow duration-200"
-          >
-            Search
-          </Button>
-          
-          <Button 
-            type="button" 
-            variant="outline" 
-            className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200 text-green-700 border-green-500 hover:bg-green-50"
-            onClick={() => onDeliveryFilter?.("cash_on_delivery")}
-          >
-            <Truck className="h-4 w-4 mr-2" />
-            Cash on Delivery
-          </Button>
-          
-          <Button 
-            type="button" 
-            variant="outline" 
-            className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200 text-blue-700 border-blue-500 hover:bg-blue-50"
-            onClick={() => onDeliveryFilter?.("store_pickup")}
-          >
-            <Store className="h-4 w-4 mr-2" />
-            Store Pick Up
-          </Button>
-          
-          <Button 
-            type="button" 
-            variant="outline" 
-            className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200"
-            onClick={() => {
-              setSearch("");
-              onSearchChange("");
-              onLocationChange("");
-              onCategoryChange("all");
-            }}
-          >
-            Clear Filters
-          </Button>
+          {/* Centered delivery and filter buttons */}
+          <div className="flex flex-wrap justify-center gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200 text-green-700 border-green-500 hover:bg-green-50"
+              onClick={() => onDeliveryFilter?.("cash_on_delivery")}
+            >
+              <Truck className="h-4 w-4 mr-2" />
+              Cash on Delivery
+            </Button>
+            
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200 text-blue-700 border-blue-500 hover:bg-blue-50"
+              onClick={() => onDeliveryFilter?.("store_pickup")}
+            >
+              <Store className="h-4 w-4 mr-2" />
+              Store Pick Up
+            </Button>
+            
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="border-2 shadow-md hover:shadow-lg transition-shadow duration-200"
+              onClick={() => {
+                setSearch("");
+                onSearchChange("");
+                onLocationChange("");
+                onCategoryChange("all");
+              }}
+            >
+              Clear Filters
+            </Button>
+          </div>
         </div>
       </div>
     </Card>
