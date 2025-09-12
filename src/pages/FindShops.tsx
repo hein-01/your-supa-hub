@@ -7,7 +7,7 @@ import { SearchFilters } from "@/components/SearchFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { expandSearchTerms, normalizeCategoryName } from "@/utils/synonymDictionary";
+import { expandSearchTerms, normalizeCategoryName, synonymDictionary } from "@/utils/synonymDictionary";
 
 interface Business {
   id: string;
@@ -90,37 +90,6 @@ export default function FindShops() {
 
       const page = reset ? 0 : currentPage;
       
-      // Prepare search parameters for RPC call
-      let searchTerms = null;
-      if (searchTerm) {
-        // For improved accuracy, prioritize exact phrases over individual terms
-        const trimmedTerm = searchTerm.toLowerCase().trim();
-        
-        // Always use synonym expansion for better search results
-        const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
-        
-        // Check if it's a compound term that should prioritize exact phrase matching
-        const isCompoundTerm = trimmedTerm.includes("'") || 
-                              (trimmedTerm.split(/\s+/).length > 1 && 
-                               (trimmedTerm.includes("women") || trimmedTerm.includes("men") || 
-                                trimmedTerm.includes("kids") || trimmedTerm.includes("children")));
-        
-        if (isCompoundTerm && exactPhrases.length > 0) {
-          // For compound terms, prioritize exact phrases (including synonyms)
-          searchTerms = exactPhrases;
-        } else if (exactPhrases.length > 0) {
-          // Use exact phrases when available
-          searchTerms = exactPhrases;
-        } else {
-          const words = trimmedTerm.split(/\s+/);
-          if (words.length > 1) {
-            searchTerms = words; // Let RPC handle AND logic for multi-word queries
-          } else {
-            searchTerms = individualTerms.length > 0 ? individualTerms : [searchTerm];
-          }
-        }
-      }
-      
       // Get category ID for selected category
       let categoryId = null;
       if (selectedCategory !== "all") {
@@ -151,24 +120,132 @@ export default function FindShops() {
       // Prepare delivery options
       const deliveryOptions = deliveryFilter.length > 0 ? deliveryFilter : null;
 
-      // Call the RPC function with proper AND/OR logic
-      const { data, error } = await supabase.rpc('search_businesses', {
-        search_terms: searchTerms,
-        category_id: categoryId,
-        product_terms: productTerms,
-        location_token: locationToken,
-        location_town: locationTown,
-        location_province: locationProvince,
-        delivery_options: deliveryOptions,
-        page: page,
-        page_size: ITEMS_PER_PAGE
-      });
+      let searchResults = null;
+      let searchError = null;
 
-      if (error) throw error;
+      // 3-Step Search Process
+      if (searchTerm) {
+        const trimmedTerm = searchTerm.toLowerCase().trim();
 
-      if (error) throw error;
-      
-      const newBusinesses = data || [];
+        // Step 1: Primary Search (Exact Phrase Match)
+        try {
+          const { data: step1Data, error: step1Error } = await supabase.rpc('search_businesses', {
+            search_terms: [trimmedTerm], // Search for exact phrase
+            category_id: categoryId,
+            product_terms: productTerms,
+            location_token: locationToken,
+            location_town: locationTown,
+            location_province: locationProvince,
+            delivery_options: deliveryOptions,
+            page: page,
+            page_size: ITEMS_PER_PAGE
+          });
+
+          if (step1Error) throw step1Error;
+          
+          // If we found results with exact phrase match, use them
+          if (step1Data && step1Data.length > 0) {
+            searchResults = step1Data;
+          } else {
+            // Step 2: Secondary Search (Synonym Expansion)
+            const { exactPhrases } = expandSearchTerms(searchTerm);
+            
+            // Try to find canonical phrase from synonym dictionary
+            let canonicalPhrase = null;
+            Object.keys(synonymDictionary).forEach(key => {
+              const normalizedKey = key.toLowerCase().replace(/'/g, '').replace(/\s+/g, ' ').trim();
+              const normalizedSearch = trimmedTerm.replace(/'/g, '').replace(/\s+/g, ' ').trim();
+              
+              if (normalizedKey === normalizedSearch || synonymDictionary[key].some(synonym => 
+                synonym.toLowerCase().replace(/'/g, '').replace(/\s+/g, ' ').trim() === normalizedSearch
+              )) {
+                canonicalPhrase = key.toLowerCase();
+                return;
+              }
+            });
+
+            if (canonicalPhrase) {
+              const { data: step2Data, error: step2Error } = await supabase.rpc('search_businesses', {
+                search_terms: [canonicalPhrase], // Search for canonical phrase
+                category_id: categoryId,
+                product_terms: productTerms,
+                location_token: locationToken,
+                location_town: locationTown,
+                location_province: locationProvince,
+                delivery_options: deliveryOptions,
+                page: page,
+                page_size: ITEMS_PER_PAGE
+              });
+
+              if (step2Error) throw step2Error;
+              
+              if (step2Data && step2Data.length > 0) {
+                searchResults = step2Data;
+              }
+            }
+
+            // Step 3: Tertiary Search (Multi-Word AND Fallback)
+            if (!searchResults || searchResults.length === 0) {
+              const words = trimmedTerm.split(/\s+/).filter(word => word.length > 0);
+              
+              if (words.length > 1) {
+                const { data: step3Data, error: step3Error } = await supabase.rpc('search_businesses', {
+                  search_terms: words, // Individual words for AND logic
+                  category_id: categoryId,
+                  product_terms: productTerms,
+                  location_token: locationToken,
+                  location_town: locationTown,
+                  location_province: locationProvince,
+                  delivery_options: deliveryOptions,
+                  page: page,
+                  page_size: ITEMS_PER_PAGE
+                });
+
+                if (step3Error) throw step3Error;
+                searchResults = step3Data || [];
+              } else {
+                // Single word, use as is
+                const { data: singleWordData, error: singleWordError } = await supabase.rpc('search_businesses', {
+                  search_terms: [trimmedTerm],
+                  category_id: categoryId,
+                  product_terms: productTerms,
+                  location_token: locationToken,
+                  location_town: locationTown,
+                  location_province: locationProvince,
+                  delivery_options: deliveryOptions,
+                  page: page,
+                  page_size: ITEMS_PER_PAGE
+                });
+
+                if (singleWordError) throw singleWordError;
+                searchResults = singleWordData || [];
+              }
+            }
+          }
+        } catch (error) {
+          searchError = error;
+        }
+      } else {
+        // No search term, fetch all businesses with other filters
+        const { data, error } = await supabase.rpc('search_businesses', {
+          search_terms: null,
+          category_id: categoryId,
+          product_terms: productTerms,
+          location_token: locationToken,
+          location_town: locationTown,
+          location_province: locationProvince,
+          delivery_options: deliveryOptions,
+          page: page,
+          page_size: ITEMS_PER_PAGE
+        });
+
+        if (error) throw error;
+        searchResults = data || [];
+      }
+
+      if (searchError) throw searchError;
+
+      const newBusinesses = searchResults || [];
       
       if (reset) {
         setBusinesses(newBusinesses);
