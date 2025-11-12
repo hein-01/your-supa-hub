@@ -728,112 +728,228 @@ export default function UserDashboard() {
               {loadingPendingBookings ? (
                 <LoadingSpinner />
               ) : pendingBookings.length > 0 ? (
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Service</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Time & Place</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Submitted</TableHead>
-                          <TableHead>Time Remaining</TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {pendingBookings.map((booking) => {
-                          const createdAt = new Date(booking.created_at);
-                          const confirmationWindowEnd = addHours(createdAt, 2);
-                          const now = new Date();
-                          const timeRemaining = confirmationWindowEnd > now 
-                            ? `${Math.ceil((confirmationWindowEnd.getTime() - now.getTime()) / (1000 * 60))} min`
-                            : 'Expired';
-                          const isOwner = booking.business_resources?.businesses?.owner_id === user?.id;
-                          
-                          const slotStartTime = booking.slots?.start_time ? new Date(booking.slots.start_time) : null;
-                          const slotEndTime = booking.slots?.end_time ? new Date(booking.slots.end_time) : null;
-                          const fieldName = booking.business_resources?.name || 'N/A';
-                          
-                          return (
-                            <TableRow key={booking.id}>
-                              <TableCell className="font-medium">
-                                {booking.business_resources?.name || 'N/A'}
-                                {isOwner && (
-                                  <Badge variant="outline" className="ml-2">Owner</Badge>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                {slotStartTime ? (
-                                  <div className="font-medium">
-                                    {format(slotStartTime, "EEE, MMM dd, yyyy")}
+                <>
+                  {/* Desktop Table View */}
+                  <Card className="hidden md:block">
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Service</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Time & Place</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Submitted</TableHead>
+                            <TableHead>Time Remaining</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {pendingBookings.map((booking) => {
+                            const createdAt = new Date(booking.created_at);
+                            const confirmationWindowEnd = addHours(createdAt, 2);
+                            const now = new Date();
+                            const timeRemaining = confirmationWindowEnd > now 
+                              ? `${Math.ceil((confirmationWindowEnd.getTime() - now.getTime()) / (1000 * 60))} min`
+                              : 'Expired';
+                            const isOwner = booking.business_resources?.businesses?.owner_id === user?.id;
+                            
+                            const slotStartTime = booking.slots?.start_time ? new Date(booking.slots.start_time) : null;
+                            const slotEndTime = booking.slots?.end_time ? new Date(booking.slots.end_time) : null;
+                            const fieldName = booking.business_resources?.name || 'N/A';
+                            
+                            return (
+                              <TableRow key={booking.id}>
+                                <TableCell className="font-medium">
+                                  {booking.business_resources?.name || 'N/A'}
+                                  {isOwner && (
+                                    <Badge variant="outline" className="ml-2">Owner</Badge>
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  {slotStartTime ? (
+                                    <div className="font-medium">
+                                      {format(slotStartTime, "EEE, MMM dd, yyyy")}
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted-foreground">-</span>
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  {slotStartTime && slotEndTime ? (
+                                    <div className="text-sm">
+                                      {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")} [{fieldName}]
+                                    </div>
+                                  ) : (
+                                    <span className="text-muted-foreground">-</span>
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  {new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency: "MMK",
+                                    maximumFractionDigits: 0,
+                                  }).format(Number(booking.payment_amount || 0))}
+                                </TableCell>
+                                <TableCell>
+                                  <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded text-xs font-medium">
+                                    {booking.status}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-sm text-muted-foreground">
+                                  {format(createdAt, "dd MMM yyyy, h:mm a")}
+                                </TableCell>
+                                <TableCell className={timeRemaining === 'Expired' ? 'text-destructive' : 'text-muted-foreground'}>
+                                  {timeRemaining}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col gap-2">
+                                    {isOwner && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => {
+                                          setSelectedBookingId(booking.id);
+                                          setConfirmationDialogOpen(true);
+                                        }}
+                                      >
+                                        <Eye className="h-4 w-4 mr-1" />
+                                        Review
+                                      </Button>
+                                    )}
+                                    {booking.service_contact_phone && (
+                                      <Button
+                                        size="sm"
+                                        variant="default"
+                                        onClick={() => window.open(`tel:${booking.service_contact_phone}`, '_self')}
+                                      >
+                                        Call Provider
+                                      </Button>
+                                    )}
                                   </div>
-                                ) : (
-                                  <span className="text-muted-foreground">-</span>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                {slotStartTime && slotEndTime ? (
-                                  <div className="text-sm">
-                                    {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")} [{fieldName}]
-                                  </div>
-                                ) : (
-                                  <span className="text-muted-foreground">-</span>
-                                )}
-                              </TableCell>
-                              <TableCell>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-4">
+                    {pendingBookings.map((booking) => {
+                      const createdAt = new Date(booking.created_at);
+                      const confirmationWindowEnd = addHours(createdAt, 2);
+                      const now = new Date();
+                      const timeRemaining = confirmationWindowEnd > now 
+                        ? `${Math.ceil((confirmationWindowEnd.getTime() - now.getTime()) / (1000 * 60))} min`
+                        : 'Expired';
+                      const isOwner = booking.business_resources?.businesses?.owner_id === user?.id;
+                      
+                      const slotStartTime = booking.slots?.start_time ? new Date(booking.slots.start_time) : null;
+                      const slotEndTime = booking.slots?.end_time ? new Date(booking.slots.end_time) : null;
+                      const fieldName = booking.business_resources?.name || 'N/A';
+                      
+                      return (
+                        <Card key={booking.id}>
+                          <CardContent className="p-4 space-y-3">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <div className="font-medium text-sm">Service</div>
+                                <div className="font-semibold">
+                                  {booking.business_resources?.name || 'N/A'}
+                                  {isOwner && (
+                                    <Badge variant="outline" className="ml-2">Owner</Badge>
+                                  )}
+                                </div>
+                              </div>
+                              <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded text-xs font-medium">
+                                {booking.status}
+                              </span>
+                            </div>
+
+                            <div>
+                              <div className="font-medium text-sm text-muted-foreground">Date</div>
+                              {slotStartTime ? (
+                                <div className="font-medium">
+                                  {format(slotStartTime, "EEE, MMM dd, yyyy")}
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </div>
+
+                            <div>
+                              <div className="font-medium text-sm text-muted-foreground">Time & Place</div>
+                              {slotStartTime && slotEndTime ? (
+                                <div className="text-sm">
+                                  {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")} [{fieldName}]
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </div>
+
+                            <div>
+                              <div className="font-medium text-sm text-muted-foreground">Amount</div>
+                              <div>
                                 {new Intl.NumberFormat("en-US", {
                                   style: "currency",
                                   currency: "MMK",
                                   maximumFractionDigits: 0,
                                 }).format(Number(booking.payment_amount || 0))}
-                              </TableCell>
-                              <TableCell>
-                                <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded text-xs font-medium">
-                                  {booking.status}
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-sm text-muted-foreground">
-                                {format(createdAt, "dd MMM yyyy, h:mm a")}
-                              </TableCell>
-                              <TableCell className={timeRemaining === 'Expired' ? 'text-destructive' : 'text-muted-foreground'}>
-                                {timeRemaining}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex flex-col gap-2">
-                                  {isOwner && (
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => {
-                                        setSelectedBookingId(booking.id);
-                                        setConfirmationDialogOpen(true);
-                                      }}
-                                    >
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Review
-                                    </Button>
-                                  )}
-                                  {booking.service_contact_phone && (
-                                    <Button
-                                      size="sm"
-                                      variant="default"
-                                      onClick={() => window.open(`tel:${booking.service_contact_phone}`, '_self')}
-                                    >
-                                      Call Provider
-                                    </Button>
-                                  )}
+                              </div>
+                            </div>
+
+                            <div className="flex justify-between">
+                              <div>
+                                <div className="font-medium text-sm text-muted-foreground">Submitted</div>
+                                <div className="text-sm">
+                                  {format(createdAt, "dd MMM yyyy, h:mm a")}
                                 </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+                              </div>
+                              <div>
+                                <div className="font-medium text-sm text-muted-foreground">Time Remaining</div>
+                                <div className={`text-sm ${timeRemaining === 'Expired' ? 'text-destructive' : ''}`}>
+                                  {timeRemaining}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 pt-2">
+                              {isOwner && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setSelectedBookingId(booking.id);
+                                    setConfirmationDialogOpen(true);
+                                  }}
+                                  className="w-full"
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Review
+                                </Button>
+                              )}
+                              {booking.service_contact_phone && (
+                                <Button
+                                  size="sm"
+                                  variant="default"
+                                  onClick={() => window.open(`tel:${booking.service_contact_phone}`, '_self')}
+                                  className="w-full"
+                                >
+                                  Call Provider
+                                </Button>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </>
               ) : (
                 <Card>
                   <CardContent className="pt-6">
@@ -851,95 +967,186 @@ export default function UserDashboard() {
                  <ArrowUp className="h-5 w-5 text-primary" />
                  Business Listings
                </h3>
-              {loadingBusinesses ? (
+               {loadingBusinesses ? (
                 <LoadingSpinner />
               ) : userBusinesses.length > 0 ? (
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Business Name</TableHead>
-                          <TableHead>Listing Price</TableHead>
-                          <TableHead>Odoo Price</TableHead>
-                          <TableHead>Listing Expires</TableHead>
-                          <TableHead>Odoo Expires</TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {userBusinesses.map((business) => {
-                          const currentDate = new Date();
-                          const listingExpired = business.listing_expired_date && new Date(business.listing_expired_date) < currentDate;
-                          const odooExpired = business.odoo_expired_date && new Date(business.odoo_expired_date) < currentDate;
-                          const canUpgrade = listingExpired || odooExpired;
-                          
-                          return (
-                            <TableRow key={business.id}>
-                              <TableCell className="font-medium">{business.name}</TableCell>
-                              <TableCell>
-                                <span className="text-muted-foreground">
-                                  {listingPrice || 'Loading...'}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                <span className="text-muted-foreground">
-                                  {odooPrice || 'Loading...'}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                {business.listing_expired_date ? (
-                                  <span className={listingExpired ? 'text-destructive' : 'text-muted-foreground'}>
-                                    {formatDateWithOrdinal(business.listing_expired_date)}
+                <>
+                  {/* Desktop Table View */}
+                  <Card className="hidden md:block">
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Business Name</TableHead>
+                            <TableHead>Listing Price</TableHead>
+                            <TableHead>Odoo Price</TableHead>
+                            <TableHead>Listing Expires</TableHead>
+                            <TableHead>Odoo Expires</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {userBusinesses.map((business) => {
+                            const currentDate = new Date();
+                            const listingExpired = business.listing_expired_date && new Date(business.listing_expired_date) < currentDate;
+                            const odooExpired = business.odoo_expired_date && new Date(business.odoo_expired_date) < currentDate;
+                            const canUpgrade = listingExpired || odooExpired;
+                            
+                            return (
+                              <TableRow key={business.id}>
+                                <TableCell className="font-medium">{business.name}</TableCell>
+                                <TableCell>
+                                  <span className="text-muted-foreground">
+                                    {listingPrice || 'Loading...'}
                                   </span>
-                                ) : (
-                                  <span className="text-muted-foreground">No expiry</span>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <div className="space-y-2">
-                                  {business.odoo_expired_date && (
-                                    <span className={odooExpired ? 'text-destructive' : 'text-muted-foreground'}>
-                                      {formatDateWithOrdinal(business.odoo_expired_date)}
+                                </TableCell>
+                                <TableCell>
+                                  <span className="text-muted-foreground">
+                                    {odooPrice || 'Loading...'}
+                                  </span>
+                                </TableCell>
+                                <TableCell>
+                                  {business.listing_expired_date ? (
+                                    <span className={listingExpired ? 'text-destructive' : 'text-muted-foreground'}>
+                                      {formatDateWithOrdinal(business.listing_expired_date)}
                                     </span>
+                                  ) : (
+                                    <span className="text-muted-foreground">No expiry</span>
                                   )}
-                                   {business['POS+Website'] === 0 && (
-                                     <Button
-                                       size="sm"
-                                       onClick={() => {
-                                         setSelectedBusiness(business);
-                                         setModalType('pos-website');
-                                         setUpgradeModalOpen(true);
-                                       }}
-                                       className="text-white w-full px-2 hover:bg-opacity-80 transition-all duration-200 hover:shadow-lg"
-                                       style={{ backgroundColor: '#D4A029' }}
-                                     >
-                                       Get POS + Website
-                                     </Button>
-                                   )}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="space-y-2">
+                                    {business.odoo_expired_date && (
+                                      <span className={odooExpired ? 'text-destructive' : 'text-muted-foreground'}>
+                                        {formatDateWithOrdinal(business.odoo_expired_date)}
+                                      </span>
+                                    )}
+                                     {business['POS+Website'] === 0 && (
+                                       <Button
+                                         size="sm"
+                                         onClick={() => {
+                                           setSelectedBusiness(business);
+                                           setModalType('pos-website');
+                                           setUpgradeModalOpen(true);
+                                         }}
+                                         className="text-white w-full px-2 hover:bg-opacity-80 transition-all duration-200 hover:shadow-lg"
+                                         style={{ backgroundColor: '#D4A029' }}
+                                       >
+                                         Get POS + Website
+                                       </Button>
+                                     )}
+                                  </div>
+                                </TableCell>
+                                 <TableCell>
+                                   <Button
+                                     size="sm"
+                                     disabled={!canUpgrade}
+                                     onClick={() => {
+                                       setSelectedBusiness(business);
+                                       setModalType('upgrade');
+                                       setUpgradeModalOpen(true);
+                                     }}
+                                     className={canUpgrade ? "bg-primary hover:bg-primary/90" : ""}
+                                   >
+                                     Upgrade
+                                   </Button>
+                                 </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-4">
+                    {userBusinesses.map((business) => {
+                      const currentDate = new Date();
+                      const listingExpired = business.listing_expired_date && new Date(business.listing_expired_date) < currentDate;
+                      const odooExpired = business.odoo_expired_date && new Date(business.odoo_expired_date) < currentDate;
+                      const canUpgrade = listingExpired || odooExpired;
+                      
+                      return (
+                        <Card key={business.id}>
+                          <CardContent className="p-4 space-y-3">
+                            <div>
+                              <div className="font-medium text-sm text-muted-foreground">Business Name</div>
+                              <div className="font-semibold">{business.name}</div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <div className="font-medium text-sm text-muted-foreground">Listing Price</div>
+                                <div className="text-sm">
+                                  {listingPrice || 'Loading...'}
                                 </div>
-                              </TableCell>
-                               <TableCell>
-                                 <Button
-                                   size="sm"
-                                   disabled={!canUpgrade}
-                                   onClick={() => {
-                                     setSelectedBusiness(business);
-                                     setModalType('upgrade');
-                                     setUpgradeModalOpen(true);
-                                   }}
-                                   className={canUpgrade ? "bg-primary hover:bg-primary/90" : ""}
-                                 >
-                                   Upgrade
-                                 </Button>
-                               </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+                              </div>
+                              <div>
+                                <div className="font-medium text-sm text-muted-foreground">Odoo Price</div>
+                                <div className="text-sm">
+                                  {odooPrice || 'Loading...'}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <div className="font-medium text-sm text-muted-foreground">Listing Expires</div>
+                                {business.listing_expired_date ? (
+                                  <div className={`text-sm ${listingExpired ? 'text-destructive font-medium' : ''}`}>
+                                    {formatDateWithOrdinal(business.listing_expired_date)}
+                                  </div>
+                                ) : (
+                                  <div className="text-sm">No expiry</div>
+                                )}
+                              </div>
+                              <div>
+                                <div className="font-medium text-sm text-muted-foreground">Odoo Expires</div>
+                                {business.odoo_expired_date ? (
+                                  <div className={`text-sm ${odooExpired ? 'text-destructive font-medium' : ''}`}>
+                                    {formatDateWithOrdinal(business.odoo_expired_date)}
+                                  </div>
+                                ) : (
+                                  <div className="text-sm">-</div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 pt-2">
+                              {business['POS+Website'] === 0 && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedBusiness(business);
+                                    setModalType('pos-website');
+                                    setUpgradeModalOpen(true);
+                                  }}
+                                  className="text-white w-full hover:bg-opacity-80 transition-all duration-200 hover:shadow-lg"
+                                  style={{ backgroundColor: '#D4A029' }}
+                                >
+                                  Get POS + Website
+                                </Button>
+                              )}
+                              <Button
+                                size="sm"
+                                disabled={!canUpgrade}
+                                onClick={() => {
+                                  setSelectedBusiness(business);
+                                  setModalType('upgrade');
+                                  setUpgradeModalOpen(true);
+                                }}
+                                className={`w-full ${canUpgrade ? "bg-primary hover:bg-primary/90" : ""}`}
+                              >
+                                Upgrade
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </>
               ) : (
                 <Card>
                   <CardContent className="py-8">
