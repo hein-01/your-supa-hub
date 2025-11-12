@@ -343,7 +343,7 @@ export default function ServiceAvailability(props: ServiceAvailabilityProps) {
     }
   }, [paymentMethodsError, toast]);
 
-  const handleBookNow = () => {
+  const handleBookNow = async () => {
     if (!selectedSlot) {
       toast({
         title: "Select a slot",
@@ -378,10 +378,64 @@ export default function ServiceAvailability(props: ServiceAvailabilityProps) {
       });
     }
 
-    setShowReceiptModal(true);
+    // PART A: Verify slot availability before opening modal
+    try {
+      const { data: slotCheck, error: slotError } = await supabase
+        .from("slots")
+        .select("id, is_booked, booking_id, slot_price")
+        .eq("id", selectedSlot.id)
+        .maybeSingle();
+
+      if (slotError) {
+        toast({
+          title: "Verification failed",
+          description: "Unable to verify slot availability. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!slotCheck) {
+        toast({
+          title: "Slot not found",
+          description: "The selected time slot no longer exists. Please refresh and select another.",
+          variant: "destructive",
+        });
+        setSelectedSlotIds(new Set());
+        return;
+      }
+
+      if (slotCheck.is_booked || slotCheck.booking_id) {
+        toast({
+          title: "Slot unavailable",
+          description: "Someone just booked this slot. Please select another time.",
+          variant: "destructive",
+        });
+        // Update local state to reflect the booking
+        setSlots((prev) =>
+          prev.map((slot) =>
+            slot.id === selectedSlot.id
+              ? { ...slot, is_booked: true, booking_id: slotCheck.booking_id }
+              : slot
+          )
+        );
+        setSelectedSlotIds(new Set());
+        return;
+      }
+
+      // Slot is available, proceed to modal
+      setShowReceiptModal(true);
+    } catch (error) {
+      console.error("Slot verification error:", error);
+      toast({
+        title: "Verification error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSubmitReceipt = async (file: File) => {
+  const handleSubmitReceipt = async (file: File | null) => {
     if (!selectedSlot || !user) return;
     if (selectedSlot.slot_price === null || selectedSlot.slot_price === undefined) {
       toast({
@@ -391,8 +445,74 @@ export default function ServiceAvailability(props: ServiceAvailabilityProps) {
       });
       return;
     }
+    
     setIsSubmittingBooking(true);
     try {
+      // PART B: Final verification before atomic submission
+      const { data: finalSlotCheck, error: finalSlotError } = await supabase
+        .from("slots")
+        .select("id, is_booked, booking_id, slot_price, start_time, end_time")
+        .eq("id", selectedSlot.id)
+        .maybeSingle();
+
+      if (finalSlotError) {
+        toast({
+          title: "Verification failed",
+          description: "Unable to verify slot availability before submission. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!finalSlotCheck) {
+        toast({
+          title: "Slot not found",
+          description: "The selected time slot no longer exists. Please refresh and select another.",
+          variant: "destructive",
+        });
+        setShowReceiptModal(false);
+        setSelectedSlotIds(new Set());
+        return;
+      }
+
+      if (finalSlotCheck.is_booked || finalSlotCheck.booking_id) {
+        toast({
+          title: "Slot just booked",
+          description: "Someone booked this slot moments ago. Please select another time.",
+          variant: "destructive",
+        });
+        setSlots((prev) =>
+          prev.map((slot) =>
+            slot.id === selectedSlot.id
+              ? { ...slot, is_booked: true, booking_id: finalSlotCheck.booking_id }
+              : slot
+          )
+        );
+        setShowReceiptModal(false);
+        setSelectedSlotIds(new Set());
+        return;
+      }
+
+      // Price match verification
+      if (Number(finalSlotCheck.slot_price) !== Number(selectedSlot.slot_price)) {
+        toast({
+          title: "Price changed",
+          description: "The slot price has been updated. Please review and try again.",
+          variant: "destructive",
+        });
+        setSlots((prev) =>
+          prev.map((slot) =>
+            slot.id === selectedSlot.id
+              ? { ...slot, slot_price: finalSlotCheck.slot_price }
+              : slot
+          )
+        );
+        setShowReceiptModal(false);
+        setSelectedSlotIds(new Set());
+        return;
+      }
+
+      // All verifications passed - proceed with atomic booking submission
       const result = await submitBooking(
         selectedSlot.id,
         user.id,
@@ -425,6 +545,13 @@ export default function ServiceAvailability(props: ServiceAvailabilityProps) {
       );
 
       navigate("/dashboard");
+    } catch (error) {
+      console.error("Booking submission error:", error);
+      toast({
+        title: "Submission error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmittingBooking(false);
     }
