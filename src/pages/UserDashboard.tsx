@@ -735,8 +735,7 @@ export default function UserDashboard() {
                         <TableRow>
                           <TableHead>Service</TableHead>
                           <TableHead>Date</TableHead>
-                          <TableHead>Time Range</TableHead>
-                          <TableHead>Field Name</TableHead>
+                          <TableHead>Time & Place</TableHead>
                           <TableHead>Amount</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Submitted</TableHead>
@@ -778,14 +777,11 @@ export default function UserDashboard() {
                               <TableCell>
                                 {slotStartTime && slotEndTime ? (
                                   <div className="text-sm">
-                                    {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")}
+                                    {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")} + {fieldName}
                                   </div>
                                 ) : (
                                   <span className="text-muted-foreground">-</span>
                                 )}
-                              </TableCell>
-                              <TableCell>
-                                <div className="text-sm">{fieldName}</div>
                               </TableCell>
                               <TableCell>
                                 {new Intl.NumberFormat("en-US", {
