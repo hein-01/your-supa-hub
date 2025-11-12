@@ -20,6 +20,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import SubmitReceiptModal, { type PaymentMethodInfo } from "@/components/SubmitReceiptModal";
 import { submitBooking } from "@/lib/bookingActions";
+import { Navbar } from "@/components/Navbar";
 
 // Minimal currency formatter – adjust currency if needed
 const currency = new Intl.NumberFormat("en-US", {
@@ -559,7 +560,12 @@ export default function ServiceAvailability(props: ServiceAvailabilityProps) {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-background via-muted/20 to-background flex flex-col">
-      <div className="max-w-6xl w-full mx-auto p-4 md:p-8 space-y-6">
+      {/* Desktop Navigation */}
+      <div className="hidden md:block">
+        <Navbar />
+      </div>
+      
+      <div className="max-w-6xl w-full mx-auto p-4 md:p-8 md:pt-24 space-y-6">
         {/* Venue Selection Card */}
         <Card className="shadow-lg border-primary/10">
           <CardHeader>
