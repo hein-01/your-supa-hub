@@ -777,7 +777,7 @@ export default function UserDashboard() {
                               <TableCell>
                                 {slotStartTime && slotEndTime ? (
                                   <div className="text-sm">
-                                    {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")} + {fieldName}
+                                    {format(slotStartTime, "h:mm a")} - {format(slotEndTime, "h:mm a")} [{fieldName}]
                                   </div>
                                 ) : (
                                   <span className="text-muted-foreground">-</span>
